@@ -4,7 +4,7 @@ pipeline {
         // CI Stages
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/sreekanth45k/your-repo.git'
+                git branch: 'master', url: 'https://github.com/sreekanth45k/Jenkinsfile-integration.git'
             }
         }
         stage('Build') {
