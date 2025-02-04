@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    stages {
+        // CI Stages
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/sreekanth45k/your-repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'pip install -r requirements.txt'
+            }
+        }
+        stage('Unit Tests') {
+            steps {
+                echo 'pytest tests/unit'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                echo 'docker build -t sreekanth45k/app:v1.0.1 .'
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                echo 'docker push sreekanth45k/app:v1.0.1'
+            }
+        }
+
+        // CD Stages
+        stage('Deploy to Staging') {
+            steps {
+                echo 'kubectl apply -f k8s/staging-deployment.yaml'
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                echo 'pytest tests/integration'
+            }
+        }
+        stage('Manual Approval') {
+            steps {
+                input 'Deploy to Production?'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                echo 'kubectl apply -f k8s/production-deployment.yaml'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
